@@ -1,0 +1,29 @@
+# PyGit: Git Internals Rebuild & DAG Visualizer
+
+A reimplementation of the core Git architecture from scratch in Python, complete with a Flask API and an interactive React Flow frontend. This project explores the fundamentals of version control by rebuilding low-level object storage (blobs, trees, commits), SHA-1 hashing, and zlib compression directly matching native Git behavior[cite: 1].
+
+## Architectural Overview
+
+* **Content-Addressable Storage Engine (Python)**: Objects are hashed via SHA-1, compressed using `zlib`, and stored in `.pygit/objects/`[cite: 1].
+* **The Object Model**: Implements `blob` (raw file data), `tree` (directory pointers), and `commit` (snapshots forming the DAG)[cite: 1].
+* **Staging Area (Index)**: A JSON-backed index tracks file paths and their associated blob hashes prior to tree construction[cite: 1].
+* **REST API (Flask)**: Serves the internal `.pygit` DAG structure as JSON endpoints.
+* **Frontend Visualizer (React & TypeScript)**: Consumes the API to render interactive, draggable commit nodes and animated branch edges using React Flow.
+
+## Getting Started
+
+### Prerequisites
+* Python 3.6+
+* Node.js & npm
+
+### 1. Engine Setup
+```bash
+git clone [https://github.com/MustafaMaj23/pygit.git](https://github.com/MustafaMaj23/pygit.git)
+cd pygit
+chmod +x pygit.py
+
+# Initialize a repo and make a commit
+./pygit.py init
+echo "Hello World" > file.txt
+./pygit.py add file.txt
+./pygit.py commit "Initial commit"
