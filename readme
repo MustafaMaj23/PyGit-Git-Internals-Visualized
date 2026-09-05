@@ -1,29 +1,62 @@
-# PyGit: Git Internals Rebuild & DAG Visualizer
+# PyGit: Version Control Engine & DAG Visualizer
 
-A reimplementation of the core Git architecture from scratch in Python, complete with a Flask API and an interactive React Flow frontend. This project explores the fundamentals of version control by rebuilding low-level object storage (blobs, trees, commits), SHA-1 hashing, and zlib compression directly matching native Git behavior[cite: 1].
+A from-scratch reimplementation of Git's core architecture built in Python, paired with a full-stack React application to visualize the internal Directed Acyclic Graph (DAG) in real-time. 
 
-## Architectural Overview
+This project explores the fundamentals of version control systems by rebuilding low-level object storage (blobs, trees, commits), cryptographic hashing, and data compression directly matching native Git behavior.
 
-* **Content-Addressable Storage Engine (Python)**: Objects are hashed via SHA-1, compressed using `zlib`, and stored in `.pygit/objects/`[cite: 1].
-* **The Object Model**: Implements `blob` (raw file data), `tree` (directory pointers), and `commit` (snapshots forming the DAG)[cite: 1].
-* **Staging Area (Index)**: A JSON-backed index tracks file paths and their associated blob hashes prior to tree construction[cite: 1].
-* **REST API (Flask)**: Serves the internal `.pygit` DAG structure as JSON endpoints.
-* **Frontend Visualizer (React & TypeScript)**: Consumes the API to render interactive, draggable commit nodes and animated branch edges using React Flow.
+## 🏗️ System Architecture
 
-## Getting Started
+The architecture is divided into a low-level CLI engine and a full-stack visualization layer.
+
+1. **Content-Addressable Storage Engine (Python):** 
+   - Hashes file contents via `SHA-1` and compresses them using `zlib`.
+   - Stores raw binary data in a hidden `.pygit/objects/` directory based on the first two characters of the hash.
+   - Implements the foundational Git object types: `blob` (file data), `tree` (directory structures), and `commit` (snapshots with parent pointers).
+2. **REST API (Flask):** 
+   - Directly parses the compressed binary object files to construct the commit history tree.
+   - Serves the parsed graph structure as JSON endpoints (`/api/commits`).
+3. **Interactive Frontend (React, TypeScript, Vite):** 
+   - Consumes the API to render the repository's state using **React Flow**.
+   - Displays a live, draggable graph of commit nodes and animated branch edges, providing a visual representation of the DAG structure.
+
+## 🚀 Features
+
+* **Native Git Compatibility:** Generates the exact same SHA-1 hashes as native Git for identical files.
+* **Efficient Storage:** Implements `zlib` compression for all objects, minimizing disk space.
+* **Staging Area (Index):** JSON-backed index to track file paths and object hashes prior to tree construction.
+* **Real-time DAG Visualization:** A modern UI that updates dynamically as new commits are pushed via the CLI.
+
+## 💻 Tech Stack
+
+* **Core Engine:** Python 3, `hashlib`, `zlib`, `os`
+* **Backend API:** Python, Flask, Flask-CORS
+* **Frontend UI:** React 18, TypeScript, Vite, React Flow, Axios
+
+## 🛠️ Getting Started
 
 ### Prerequisites
-* Python 3.6+
+* Python 3.8+
 * Node.js & npm
 
-### 1. Engine Setup
+### 1. Initialize the Engine
+Clone the repository and set up a local PyGit database:
 ```bash
-git clone [https://github.com/MustafaMaj23/pygit.git](https://github.com/MustafaMaj23/pygit.git)
-cd pygit
+git clone [https://github.com/MustafaMaj23/PyGit.git](https://github.com/MustafaMaj23/PyGit.git)
+cd PyGit
 chmod +x pygit.py
 
-# Initialize a repo and make a commit
-./pygit.py init
-echo "Hello World" > file.txt
-./pygit.py add file.txt
-./pygit.py commit "Initial commit"
+# Initialize an empty repository
+python3 pygit.py init
+
+# Create a file, stage it, and commit
+echo "Hello World" > my_file.txt
+python3 pygit.py add my_file.txt
+python3 pygit.py commit "Initial commit"
+
+pip3 install flask flask-cors
+python3 server.py
+# Runs on http://localhost:5001
+
+cd visualizer
+npm install
+npm run dev
